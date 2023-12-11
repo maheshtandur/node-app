@@ -40,12 +40,28 @@ pipeline {
                 '''
             }
         }
+        stage('Remove Docker Containers') {
+            steps {
+                script {
+                    // Define the Docker container name or pattern to identify containers to be removed
+                    def containerName = 'node-app'
+
+                    // Check if the Docker container exists
+                    def containerExists = sh(script: "docker ps -q -f name=${containerName}", returnStatus: true) == 0
+
+                    // If the container exists, stop and remove it
+                    if (containerExists) {
+                        echo "Stopping and removing Docker container: ${containerName}"
+                        sh "docker stop ${containerName}"
+                        sh "docker rm ${containerName}"
+                    } else {
+                        echo "No running Docker container found with the name: ${containerName}"
+                    }
+                }
+            }
+        }
         stage('Docker Run'){
             steps{
-                echo "Stop the alreay running Container"
-                sh '''
-                    ${DOCKER} stop node-app
-                '''
                 echo "Run Docker Container from docker image: ${DOCKER_TAG_NAME}"
                 sh '''
                     ${DOCKER} run --rm -d --name node-app -p 80:80 mtandur/node-app
