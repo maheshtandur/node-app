@@ -42,6 +42,10 @@ pipeline {
         }
         stage('Docker Run'){
             steps{
+                echo "Stop the alreay running Container"
+                sh '''
+                    ${DOCKER} stop node-app
+                '''
                 echo "Run Docker Container from docker image: ${DOCKER_TAG_NAME}"
                 sh '''
                     ${DOCKER} run --rm -d --name node-app -p 80:80 mtandur/node-app
