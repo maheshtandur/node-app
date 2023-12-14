@@ -28,7 +28,7 @@ pipeline {
             steps{
                 echo "Delete image: ${DOCKER_TAG_NAME} locally"
                 sh '''
-                    ${DOCKER} rmi ${DOCKER_TAG_NAME}
+                    ${DOCKER} rmi -f ${DOCKER_TAG_NAME}
                 '''
             }
         }
@@ -47,14 +47,15 @@ pipeline {
                     def containerName = 'node-app'
 
                     // Check if the Docker container exists
-                    def containerExists = sh(script: "${DOCKER} ps -q -f name=${containerName}", returnStatus: true) == 0
+                    def isRunning = sh(script: "${DOCKER} inspect -f '{{.State.Running}}' ${containerName}", returnStatus: true) == 0
 
                     // If the container exists, stop and remove it
-                    if (containerExists) {
+                    if (isRunning) {
                         echo "Stopping and removing Docker container: ${containerName}"
                         sh "${DOCKER} stop ${containerName}"
-                        //sh "${DOCKER} rm ${containerName}"
-                    } else {
+                        sh "${DOCKER} rm ${containerName}"
+                    } 
+                    else {
                         echo "No running Docker container found with the name: ${containerName}"
                     }
                 }
