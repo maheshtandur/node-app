@@ -52,7 +52,7 @@ pipeline {
                     // If the container exists, stop and remove it
                     if (containerExists) {
                         echo "Stopping and removing Docker container: ${containerName}"
-                        //sh "${DOCKER} stop ${containerName}"
+                        sh "${DOCKER} stop ${containerName}"
                         //sh "${DOCKER} rm ${containerName}"
                     } else {
                         echo "No running Docker container found with the name: ${containerName}"
