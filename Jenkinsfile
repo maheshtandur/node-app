@@ -47,13 +47,13 @@ pipeline {
                     def containerName = 'node-app'
 
                     // Check if the Docker container exists
-                    def isRunning = sh(script: "${DOCKER} inspect -f '{{.State.Running}}' ${containerName}", returnStatus: true) == 0
+                    def isRunning = sh(script: "${DOCKER} inspect -f '{{.State.Running}}' ${containerName}", returnStatus: true)
 
                     // If the container exists, stop and remove it
-                    if (isRunning) {
-                        echo "Stopping and removing Docker container: ${containerName}"
+                    if (isRunning == 0) {
+                        echo "Container: ${containerName} is Running Stopping and removing Docker container"
                         sh "${DOCKER} stop ${containerName}"
-                        sh "${DOCKER} rm ${containerName}"
+                        //sh "${DOCKER} rm ${containerName}"
                     } 
                     else {
                         echo "No running Docker container found with the name: ${containerName}"
